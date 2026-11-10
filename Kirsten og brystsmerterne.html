@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="da"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kirsten – brystsmerter i hjemmeplejen</title>
+<style>
+:root{--bg:#f2f6f5;--ink:#15302e;--card:#fff;--ac:#1d6b67;--onac:#fff;--line:#9db8b4;--ok:#1e6b3a;--okbg:#e1f2e6;--bad:#8f3512;--badbg:#fbe9e1;--soft:#e2eeec;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101d1c;--ink:#e6f0ee;--card:#1a2b2a;--ac:#7fd0c9;--onac:#0b1a19;--line:#41605d;--ok:#8fd9a6;--okbg:#17321f;--bad:#ffb391;--badbg:#3a2218;--soft:#223735}}
+:root[data-theme="dark"]{--bg:#101d1c;--ink:#e6f0ee;--card:#1a2b2a;--ac:#7fd0c9;--onac:#0b1a19;--line:#41605d;--ok:#8fd9a6;--okbg:#17321f;--bad:#ffb391;--badbg:#3a2218;--soft:#223735}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header,main{max-width:860px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.25}
+h1{font-size:1.9rem;margin:.6em 0 .2em}h2{font-size:1.5rem}h3{font-size:1.2rem}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+button{font:inherit;cursor:pointer;border-radius:10px;border:2px solid var(--ac);background:var(--card);color:var(--ink);padding:10px 14px;min-height:44px}
+button.on,button.pri{background:var(--ac);color:var(--onac)}
+button:focus-visible,g[role=button]:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.bar{height:12px;background:var(--soft);border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--ac);width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.opt{display:block;width:100%;text-align:left;margin:8px 0}
+.ok{background:var(--okbg);border-color:var(--ok);color:var(--ink)}.bad{background:var(--badbg);border-color:var(--bad);color:var(--ink)}
+.note{border-left:6px solid var(--ac);padding:8px 14px;background:var(--soft);border-radius:6px}
+.warn{border-left:6px solid var(--bad);padding:8px 14px;background:var(--badbg);border-radius:6px}
+svg{width:100%;height:auto;background:var(--soft);border-radius:14px;border:1px solid var(--line)}
+g[role=button]{cursor:pointer}g.lock{opacity:.35;cursor:not-allowed}
+textarea{width:100%;min-height:80px;font:inherit;padding:8px;border-radius:8px;border:2px solid var(--line);background:var(--card);color:var(--ink);box-sizing:border-box}
+.small{font-size:.9rem}
+</style></head><body>
+<header><h1>Kirsten og brystsmerterne</h1>
+<nav id="nav"></nav>
+<div class="bar" role="progressbar" aria-label="Fremdrift" aria-valuemin="0" aria-valuemax="100"><i id="pb"></i></div></header>
+<main id="m"></main>
+<script>
+const $=s=>document.querySelector(s);
+let sec='start',aDone=[],aOpen=-1,aMsg='',bi=0,bScore=0,bAns=[],bPick=null;
+const NAV=[['start','Start'],['a','Del A: Viden'],['b','Del B: Spillet'],['r','Refleksion'],['k','Kilder']];
+
+const A=[
+{h:'Symptomerne',x:'Kraftig, trykkende smerte midt i brystet med udstråling til kæbe og venstre arm, kvalme og koldsved er klassiske tegn på akut hjerteinfarkt (AMI). Smerten kan føles som „en sten på brystet“. Udstrålingen sker, fordi hjertets smertesignaler kan mærkes i andre områder af kroppen. Koldsveden skyldes kroppens stressreaktion.',q:'Hvorfor går smerten ikke bare over ved hvile?',o:['Fordi hjertemusklen mangler ilt, og det løser hvile ikke','Fordi hun har spist for meget','Fordi smerter hos ældre oftest er ufarlige'],c:0},
+{h:'Observationerne',x:'Blodtryk 105/70 er lavt for en person med forhøjet blodtryk og kan tyde på, at hjertet pumper svagere. Puls 108 (høj) og respirationsfrekvens 24 (høj) viser, at kroppen arbejder hårdt for at kompensere. Saturation 94 % er lidt lav (typisk regnes ca. 95 % eller derover som normalt). Bleg og koldsvedende hud skyldes, at stresshormoner trækker blodkar sammen. Temperaturen er normal.',q:'Hvad tyder lavt blodtryk sammen med høj puls på her?',o:['At hun bare er nervøs, og det er ufarligt','At hjertet pumper dårligt, og kroppen forsøger at kompensere','At hun mangler vand og skal have noget at drikke'],c:1},
+{h:'Risikofaktorer',x:'Type 2-diabetes og højt blodsukker skader blodkarrenes vægge over tid. Forhøjet blodtryk belaster årevæggene. Overvægt og rygning fremmer åreforkalkning (aflejringer i pulsårerne). Høj alder øger risikoen yderligere. Tidligere rygning har stadig betydning. Faktorerne virker sammen og forstærker hinanden.',q:'Hvilket udsagn er rigtigt?',o:['Risikofaktorer virker sammen og øger risikoen for åreforkalkning','Når man er holdt op med at ryge, har rygning ingen betydning','Kun alder har betydning for risikoen'],c:0},
+{h:'Diabetes og atypiske symptomer',x:'Ved diabetes kan nerverne være skadede (neuropati), så smerten mærkes svagere eller anderledes. Hos ældre og mennesker med diabetes kan et hjerteinfarkt vise sig som træthed, åndenød, kvalme, uro eller svimmelhed uden kraftig brystsmerte. Kirstens symptomer er tydelige, men du skal også tage de utydelige alvorligt.',q:'En ældre borger med diabetes er pludseligt dårlig, kvalm og forpustet, men har ingen brystsmerter. Hvad gør du?',o:['Du antager, at det er maveonde','Du tager det alvorligt, observerer og handler efter arbejdsstedets retningslinjer','Du venter til næste besøg'],c:1},
+{h:'Medicinen',x:'Metformin sænker blodsukkeret ved type 2-diabetes. Ramipril sænker blodtrykket. Ingen af dem behandler et hjerteinfarkt. Du må ikke selv justere eller give ekstra medicin; følg altid kommunens/arbejdsstedets retningslinjer og delegation. Medicinlisten skal oplyses til alarmcentral og ambulancepersonale.',q:'Hvorfor er det vigtigt at kunne oplyse medicinen?',o:['Så ambulancepersonalet ved, hvilken medicin hun tager','Så du kan give hende medicinen igen med det samme','Det er ikke vigtigt i en akut situation'],c:0},
+{h:'Tid',x:'Når en kranspulsåre er lukket, dør hjertemuskelvæv, og det kan ikke genopbygges. Jo hurtigere åren åbnes, jo mere hjertemuskel kan reddes. Hjertet kan også få livstruende rytmeforstyrrelser. Derfor siger man: tid er hjertemuskel.',q:'Hvornår ringer du 112?',o:['Når smerten har varet en time','Når jeg har målt blodtryk to gange mere','Så snart jeg mistænker hjerteinfarkt'],c:2}];
+const HS=[[150,140],[108,192],[150,190],[150,82],[335,205],[335,68]];
+
+const B=[
+{h:'1. Første reaktion',s:'Du kommer ind. Kirsten ser dårlig ud og spørger: „Skal jeg ikke bare lægge mig og hvile?“',o:[
+['Du siger ja og lover at kigge forbi i morgen.',0,'Kirsten bliver alene med et muligt hjerteinfarkt, og dyrebar tid går tabt.','Brystsmerter med udstråling, koldsved og afvigende værdier er alvorlige. Hun må ikke efterlades eller gå i seng alene.'],
+['Du bliver hos hende, afviser sengen og handler med det samme.',3,'Kirsten bliver i trygge hænder, og hjælpen kan sættes i gang straks.','Du genkender alvoren og lader hende ikke hvile alene. Det er førsteprioriteten.'],
+['Du måler først blodsukker og venter på tallet.',1,'Tiden går, og hjælpen er stadig ikke kaldt.','Blodsukker kan være relevant, men må aldrig forsinke alarmeringen ved mistanke om hjerteinfarkt.'],
+['Du ringer til hendes egen læge og venter på tilbagekald.',1,'Du taber minutter, hvor ambulancen kunne være på vej.','Ved mistanke om akut hjerteinfarkt ringer du direkte til 112.']]},
+{h:'2. Tilkald hjælp',s:'Du skal ringe 112. Hvad gør du?',o:[
+['Du ringer 112 nu og oplyser adresse og „mistanke om hjerteinfarkt“ først.',3,'Alarmcentralen forstår alvoren med det samme og sender hjælp.','Adresse og det vigtigste problem først sikrer hurtig udsendelse.'],
+['Du ringer 112, men starter med hele sygehistorien.',1,'Alarmcentralen må vente på det vigtigste.','Begynd med adresse og hvad der er galt. Historien kommer bagefter.'],
+['Du ringer først til din leder eller vagtlægen.',1,'Alarmeringen forsinkes.','Ring 112 først. Leder kan informeres bagefter.'],
+['Du venter 15 minutter for at se, om det går over.',0,'Hjertemuskel går tabt, mens du venter.','Ved mistænkt hjerteinfarkt tæller hvert minut. Ring inden for få minutter.']]},
+{h:'3. ISBAR til alarmcentralen',s:'112 svarer. Hvilken melding er bedst opbygget (Situation, Baggrund, Aktuelt, Rådgivning/anbefaling)?',o:[
+['„Hun tager Metformin og Ramipril og har diabetes. Hun har også ondt i brystet.“',1,'Du får sagt noget vigtigt, men i omvendt rækkefølge.','Start med situationen (S), så baggrund (B).'],
+['„S: Kirsten, 74 år, mistanke om hjerteinfarkt, trykkende brystsmerte i 20 min med udstråling til kæbe og venstre arm. B: Type 2-diabetes, forhøjet blodtryk, Metformin og Ramipril. A: BT 105/70, puls 108, resp. 24, sat. 94 %, bleg, koldsvedende, vågen. R: Jeg vil gerne have ambulance hurtigst muligt og råd, til de kommer.“',3,'Alarmcentralen får overblik i den rigtige rækkefølge og kan hjælpe dig.','ISBAR giver kort, struktureret og komplet information.'],
+['„Hun har nogle værdier, som er lidt afvigende.“',1,'Alarmcentralen ved ikke, hvad problemet er.','Du skal sige, hvad der er galt, ikke kun tal.'],
+['„Hun har det skidt og vil ikke på hospitalet.“',0,'Alarmcentralen får ikke de oplysninger, der skal til.','Det er vigtigt, men det klinisk vigtigste skal først.']]},
+{h:'4. Pleje og observation, mens I venter',s:'Ambulancen er på vej. Hvad gør du?',o:[
+['Du bliver hos hende, hjælper hende i halvt siddende stilling, løsner stramt tøj, skaber ro, observerer og noterer løbende, giver ingen mad/drikke og lader hende ikke gå rundt.',3,'Kirsten er tryg og under observation, og du har tal til ambulancen.','Ro, tryghed og observation er kerneopgaver. Medicin, fx acetylsalicylsyre, må kun gives efter kommunens/arbejdsstedets retningslinjer og delegation. Spørg alarmcentralen til råds.'],
+['Du lader hende gå en lille tur og giver hende et glas vand.',0,'Hjertet belastes, og hun kan få det værre.','Fysisk aktivitet øger hjertets iltbehov. Ingen mad eller drikke, fordi hun kan få brug for undersøgelse eller behandling.'],
+['Du giver hende Ramipril og Metformin som sædvanligt.',0,'Det hjælper ikke og kan gøre skade.','Ingen af midlerne behandler hjerteinfarkt. Du giver ikke medicin uden for dine retningslinjer.'],
+['Du går ud for at hente medicinlisten og lader hende være alene.',1,'Medicinlisten er vigtig, men Kirsten er alene og bange.','Bliv hos hende. Bed evt. en kollega eller pårørende om at hente listen.']]},
+{h:'5. Kommunikation: „Jeg vil ikke på hospitalet“',s:'Kirsten, bange: „Min mand døde på sygehuset. Jeg vil ikke derind. Kan du ikke bare blive her lidt? Det går sikkert over.“',o:[
+['„Det er der ikke noget at gøre ved. Ambulancen kommer, og så tager vi af sted.“',0,'Kirsten føler sig ikke hørt og bliver mere bange.','Afvisende svar tager ikke hendes frygt alvorligt.'],
+['„Hvis du ikke kommer med, kan du dø!“',0,'Kirsten bliver endnu mere angst og lukker sig.','Panik og pres skaber modstand, ikke samarbejde.'],
+['„Jeg kan høre, du er bange, og det er forståeligt efter din mands død. Jeg bliver hos dig. Det kan være en blodprop i hjertet, og så er hurtig hjælp vigtig. Ambulancen er på vej, og jeg forklarer dig, hvad der sker.“',3,'Kirsten får lidt ro, føler sig set og får forklaringen.','Du spejler følelsen, nævner hendes oplevelse, forklarer hvorfor, bliver hos hende og lover kun det, du kan holde.'],
+['„Jeg forstår godt, du er bange. Men du skal altså med.“',1,'Hun føler sig delvist forstået, men får ingen forklaring.','Anerkendelsen er god, men mangler forklaring og tryghed om, hvad der nu sker.']]},
+{h:'6. Dilemma: selvbestemmelse og ansvar',s:'Kirsten er vågen og siger igen nej til indlæggelse. Hvad gør du?',o:[
+['Du aflyser ambulancen, fordi hun selv bestemmer.',0,'Kirsten får ikke hjælp, og du har ikke givet reel information.','Selvbestemmelse kræver, at hun har fået forståelig information om konsekvenserne. Du må ikke aflyse alene.'],
+['Du bliver hos hende, forklarer konsekvenserne, spørger igen om samtykke, lader ambulancepersonalet tale med hende, spørger om du må kontakte pårørende, og dokumenterer og videregiver oplysningerne.',3,'Kirsten føler sig respekteret og er ikke alene. Personalet kan tale med hende, og pårørende kan støtte.','Du respekterer hendes ret til at sige nej, men gør alt for at skabe tryghed og informere. Du dokumenterer og videregiver, og følger kommunens retningslinjer.'],
+['Du lover, at hun ikke skal indlægges, hvis hun kommer med.',0,'Løftet kan ikke holdes og skader tilliden.','Lov aldrig noget, du ikke kan holde. Det er lægen, der vurderer indlæggelse.'],
+['Du går ud på gangen og lader hende tænke over det.',1,'Kirsten er alene med sin angst.','Du må ikke efterlade hende alene. Bliv hos hende.']]}];
+
+function show(s){sec=s;render();window.scrollTo(0,0)}
+function prog(){const p=Math.round((aDone.length+bAns.length)/12*100);$('#pb').style.width=p+'%';$('#pb').parentNode.setAttribute('aria-valuenow',p)}
+function render(){
+$('#nav').innerHTML=NAV.map(n=>`<button class="${n[0]==sec?'on':''}" onclick="show('${n[0]}')">${n[1]}</button>`).join('');
+prog();$('#m').innerHTML=({start:vStart,a:vA,b:vB,r:vR,k:vK})[sec]()}
+
+function vStart(){return `<div class="card"><h2>Hvad skal du lære?</h2>
+<p>Du er SSA i hjemmeplejen. Kirsten på 74 år har pludselig kraftige brystsmerter. Produktet tager 10-15 minutter og svarer på: <b>Hvilke handlinger har førsteprioritet, og hvordan kommunikerer vi med Kirsten?</b></p>
+<ul><li>Forklare, hvorfor symptomer og observationer tyder på akut hjerteinfarkt.</li><li>Beskrive, hvordan risikofaktorer, diabetes og tid hænger sammen med hjerteinfarkt.</li><li>Prioritere handlinger: kalde 112, ISBAR, pleje og observation.</li><li>Kommunikere anerkendende og håndtere et dilemma om selvbestemmelse.</li></ul></div>
+<div class="card"><h3>Casen</h3><p>Kirsten, 74 år, bor alene og går normalt selv til købmanden. Hun har type 2-diabetes og forhøjet blodtryk, er overvægtig og tidligere ryger. Medicin: Metformin 500 mg x 2 og Ramipril 5 mg x 1. For ca. 20 minutter siden fik hun en kraftig, trykkende smerte i brystet med udstråling til kæbe og venstre arm. Hun er kvalm og koldsvedende og siger: „Det føles, som om der ligger en stor sten på brystet.“ BT 105/70, puls 108, resp. 24, sat. 94 %, temp. 36,5 °C, bleg og koldsvedende. Hun vil ikke på hospitalet, for hendes mand døde der for tre år siden.</p></div>
+<button class="pri" onclick="show('a')">Start med Del A</button>`}
+
+function vA(){
+let svg=`<svg viewBox="0 0 400 300" role="img" aria-label="Kirsten i lænestolen. Seks klikbare punkter."><rect x="55" y="40" width="190" height="200" rx="26" fill="#8a6a55"/><rect x="45" y="170" width="210" height="70" rx="14" fill="#a07f68"/><rect x="108" y="105" width="84" height="100" rx="30" fill="#7aa6b8"/><circle cx="150" cy="80" r="27" fill="#e8c4a0"/><path d="M123 78a27 25 0 0 1 54 0q-27-14-54 0z" fill="#c8c8c8"/><path d="M114 125l-12 70" stroke="#7aa6b8" stroke-width="18" stroke-linecap="round"/><rect x="120" y="205" width="22" height="55" rx="8" fill="#5d7487"/><rect x="156" y="205" width="22" height="55" rx="8" fill="#5d7487"/><rect x="295" y="215" width="80" height="12" fill="#6b4f3e"/><rect x="330" y="227" width="10" height="45" fill="#6b4f3e"/><rect x="320" y="198" width="30" height="17" rx="4" fill="#fff"/><circle cx="335" cy="68" r="26" fill="#fff" stroke="#555" stroke-width="3"/><path d="M335 68V50M335 68l12 6" stroke="#333" stroke-width="3"/>`;
+HS.forEach((p,i)=>{const lock=i>aDone.length&&!aDone.includes(i);const done=aDone.includes(i);
+svg+=`<g role="button" tabindex="${lock?-1:0}" aria-disabled="${lock}" aria-label="Punkt ${i+1}: ${A[i].h}${lock?' (låst)':done?' (færdig)':''}" class="${lock?'lock':''}" onclick="openA(${i})" onkeydown="if(event.key=='Enter'||event.key==' '){event.preventDefault();openA(${i})}"><circle cx="${p[0]}" cy="${p[1]}" r="16" fill="${done?'#1e6b3a':'#1d6b67'}" stroke="#fff" stroke-width="3"/><text x="${p[0]}" y="${p[1]+6}" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">${done?'✓':i+1}</text></g>`});
+svg+='</svg>';
+let box='<div class="note">Klik på punkt 1. Svar på spørgsmålet for at låse næste punkt op.</div>';
+if(aOpen>=0){const a=A[aOpen];const d=aDone.includes(aOpen);
+box=`<div class="card"><h3>${aOpen+1}. ${a.h}</h3><p>${a.x}</p><p><b>${a.q}</b></p>`+a.o.map((t,j)=>`<button class="opt" ${d?'disabled':''} onclick="ansA(${j})">${t}</button>`).join('')+(aMsg?`<p class="${d?'note':'warn'}">${aMsg}</p>`:'')+(d&&aDone.length==6?'<button class="pri" onclick="show(\'b\')">Videre til spillet</button>':'')+'</div>'}
+return `<h2>Del A: Klik og forstå</h2><div class="card"><h3>Hvad sker der ved hjerteinfarkt?</h3><p>Hjertet forsynes med ilt gennem kranspulsårerne. Ved akut hjerteinfarkt lukkes en kranspulsåre af en blodprop, ofte på en åreforkalkning. Den del af hjertemusklen, som åren forsyner, får for lidt ilt og begynder at tage skade. Det giver smerte og påvirker hjertets evne til at pumpe.</p></div>${svg}${box}`}
+function openA(i){if(i>aDone.length&&!aDone.includes(i))return;aOpen=i;aMsg='';render()}
+function ansA(j){const a=A[aOpen];if(j==a.c){if(!aDone.includes(aOpen))aDone.push(aOpen);aMsg='Rigtigt! '+(aDone.length<6?'Næste punkt er låst op.':'Alle punkter er gennemført.')}else aMsg='Ikke helt. Læs forklaringen igen og prøv igen.';render()}
+
+function vB(){
+if(bi>=6)return vEnd();
+const d=B[bi];let h=`<h2>Del B: Du er SSA hos Kirsten</h2><p class="small">Beslutning ${bi+1} af 6. Point: ${bScore}</p><div class="card"><h3>${d.h}</h3><p>${d.s}</p>`;
+d.o.forEach((o,j)=>{const cls=bPick===null?'':(j==bPick?(o[1]>=3?'ok':o[1]>=1?'':'bad'):'');h+=`<button class="opt ${cls}" ${bPick!==null?'disabled':''} onclick="pickB(${j})">${o[0]}</button>`});
+if(bPick!==null){const o=d.o[bPick];h+=`<div class="${o[1]>=3?'note':'warn'}"><p><b>Konsekvens for Kirsten:</b> ${o[2]}</p><p><b>Faglig begrundelse:</b> ${o[3]}</p><p><b>Point: ${o[1]} af 3</b></p>${o[1]<3?'<p>Tiden er afgørende, men du kan ikke „dø“ i spillet. Læs begrundelsen og tag det med videre.</p>':''}</div><button class="pri" onclick="nextB()">${bi<5?'Næste beslutning':'Se resultat'}</button>`}
+return h+'</div>'}
+function pickB(j){bPick=j;bScore+=B[bi].o[j][1];bAns.push(j);render()}
+function nextB(){bi++;bPick=null;render();window.scrollTo(0,0)}
+function vEnd(){return `<h2>Resultat: ${bScore} af 18 point</h2><div class="card"><p>${bScore>=15?'Stærkt arbejde! Du prioriterer og kommunikerer sikkert.':bScore>=10?'Godt, men gennemgå de beslutninger, hvor du ikke fik fuld point.':'Gennemgå overblikket nedenfor, og prøv igen.'}</p></div>
+<div class="card"><h3>Fagligt overblik: prioriteter i rækkefølge</h3><ol><li>Genkend alvoren og lad ikke Kirsten hvile alene.</li><li>Ring 112 hurtigt og sig adresse og „mistanke om hjerteinfarkt“ først.</li><li>Brug ISBAR: situation, baggrund, aktuelt, rådgivning/anbefaling.</li><li>Bliv hos hende, giv ro, halvt siddende stilling, løsne tøj, observer og noter, ingen mad/drikke. Medicin kun efter lokale retningslinjer/delegation.</li><li>Anerkend hendes frygt, forklar hvorfor, bliv hos hende og lov kun det, du kan holde.</li><li>Respektér selvbestemmelsen, men informér, skab tryghed, lad ambulancepersonalet tale med hende, kontakt pårørende med samtykke, dokumentér og videregiv.</li></ol></div>
+<button onclick="bi=0;bScore=0;bAns=[];bPick=null;render()">Spil igen</button> <button class="pri" onclick="show('r')">Videre til refleksion</button>`}
+
+function vR(){return `<h2>Refleksion</h2><p>Drøft i makkerpar eller klassen. Dine svar gemmes ikke.</p>`+['Hvornår bliver hensynet til selvbestemmelse vigtigt, og hvornår vejer risikoen tungest?','Hvordan kan du anerkende frygt uden at love noget, du ikke kan holde?','Hvad ville du selv have brug for, hvis du var Kirsten?'].map((q,i)=>`<div class="card"><label for="r${i}"><b>${i+1}. ${q}</b></label><textarea id="r${i}"></textarea></div>`).join('')}
+
+function vK(){return `<h2>Læs videre</h2><div class="card"><ul><li>Hjerteforeningen, om blodprop i hjertet og symptomer.</li><li>sundhed.dk, om blodprop i hjertet og type 2-diabetes.</li><li>Sundhedsstyrelsen, om kommunikation, samtykke og dokumentation.</li><li>Skolens fagbøger i sygepleje, anatomi og fysiologi samt kommunikation.</li><li>Din kommunes og dit arbejdsstedes egne retningslinjer for akutte situationer, ISBAR og medicin.</li></ul>
+<p class="warn">Dette er undervisningsmateriale. Følg altid kommunens/arbejdsstedets retningslinjer og din delegation.</p></div>`}
+render();
+</script></body></html>
